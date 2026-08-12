@@ -25,12 +25,15 @@ const ISSUE_SCHEMA = {
 
 phase('Fetch stories')
 
-// Collect all story keys across pages
+// Collect all story keys across ranges.
+// Each range covers ~100 keys — add a new range entry when the backlog grows past the last upper bound.
+// Last updated: 2026-08-12 — highest known key ~388, upper bound extended to 500 for headroom.
 const allKeys = []
 const ranges = [
   'GENAIPLAB-36 to GENAIPLAB-135',
   'GENAIPLAB-136 to GENAIPLAB-250',
   'GENAIPLAB-251 to GENAIPLAB-394',
+  'GENAIPLAB-395 to GENAIPLAB-500',
 ]
 
 const keyBatches = await parallel(ranges.map(range => () =>
