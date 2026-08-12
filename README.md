@@ -1,214 +1,304 @@
 # product-playbook
 
-Claude Code skills and workflows for the AI Prototyping Lab — a SAP-internal platform for governed, reusable AI prototyping. This repo is the PO/PM's working toolkit: everything needed to go from a product idea to a Jira-ready feature spec or story set, with platform context and governance rules built in.
+A Claude Code PM skill system for product teams using Jira. Built for the AI Prototyping Lab at SAP, but structured so the pattern is reusable on any product.
+
+The core idea: one primary skill acts as a single entry point for all PM work. It identifies the request type, injects your product context, and routes to the right tool — whether that's writing a Jira feature spec, splitting stories, planning a sprint, or running a competitive snapshot. You never have to remember which skill to invoke.
+
+---
+
+## Who this is for
+
+**Using it as-is (AI Prototyping Lab):** Clone, install dependencies, and invoke `prototyping-lab-pm`. Everything is pre-configured for ARTEAI/GENAIPLAB Jira projects, the 4-step wizard platform, and the 3 platform personas.
+
+**Adapting it for your own project:** The routing pattern and skill structure are generic. The product-specific content — Jira field IDs, personas, platform scope, competitive adjacencies — is isolated in clearly marked context blocks. See [Adapting for your project](#adapting-for-your-project).
 
 ---
 
 ## What's in this repo
 
+| Path | Reusable? | Description |
+|---|---|---|
+| `skills/prototyping-lab-pm/` | Adapt | Primary PM skill — routing table + platform context blocks |
+| `skills/aiplab-sprint-planning/` | Adapt | Sprint/PI planning — reads live Jira board state |
+| `skills/feature-to-user-stories/` | ✅ Yes | Generic story decomposition, no project-specific content |
+| `skills/arteai-feature-story/` | Reference only | Earlier version of prototyping-lab-pm, superseded |
+| `workflows/genaiplab-ac-audit.js` | Adapt | AC field compliance audit — Jira project keys need updating |
+
+---
+
+## How the system works
+
 ```
-skills/
-  prototyping-lab-pm/       # Primary skill — all PM work enters here
-  aiplab-sprint-planning/   # Sprint and PI planning assistant — reads live Jira board state
-  arteai-feature-story/     # Earlier feature+story skill (superseded by prototyping-lab-pm)
-  feature-to-user-stories/  # Generic story decomposition skill (reusable on any product)
-workflows/
-  genaiplab-ac-audit.js     # Workflow: audit AC field compliance across GENAIPLAB stories
+Your request
+    │
+    ▼
+prototyping-lab-pm          ← single entry point, always invoke this
+    │
+    ├── Feature / story work    → executes directly (Jira MCP)
+    ├── Sprint / PI planning    → aiplab-sprint-planning (Jira MCP)
+    └── Everything else         → delegates to a pm-skill with context pre-loaded
+                                   (research, competitive, JTBD, OST, splitting...)
 ```
+
+The key mechanism is **context injection**: when delegating to a pm-skill, the primary skill prepends a context block describing your product, personas, and constraints. The pm-skill skips its generic onboarding questions and works directly with your product context. This is what makes generic pm-skills produce product-specific outputs.
 
 ---
 
 ## Skills
 
-### `prototyping-lab-pm` — Primary skill
+### `prototyping-lab-pm` — Primary skill ⚑ Adapt for your project
 
-**The single entry point for all product work on the AI Prototyping Lab.** Invoke this skill for anything PM-related — feature specs, story writing, stakeholder requests, research, competitive comparisons, backlog planning. It identifies the request type, routes to the right pm-skill if needed, and pre-loads platform context so outputs are always grounded in the PRD, the 3 personas, and the platform scope.
+The single entry point. Invoke this for any PM request — it routes internally.
 
-**What it handles:**
+**Full routing table:**
 
-| Request type | Delegates to | Output |
+| Request type | Routes to | Output |
 |---|---|---|
-| Feature creation / refinement | Direct execution | 9-section spec → ARTEAI |
-| Story creation / refinement | Direct execution | Given/When/Then stories → GENAIPLAB, board 62344 |
-| Stakeholder request decoding | `incoming-request-advisor` | Literal ask vs. job-to-be-done breakdown |
+| Feature creation / refinement | Direct (Jira MCP) | 9-section spec → feature project |
+| Story creation / refinement | Direct (Jira MCP) | Given/When/Then stories → story project |
+| Sprint / PI planning | `aiplab-sprint-planning` | Readiness brief, goal draft, dependency flags |
+| Stakeholder request decoding | `incoming-request-advisor` | Literal ask vs. job-to-be-done |
 | Frame initiative as hypothesis | `epic-hypothesis` | Testable if/then bet with validation method |
-| Opportunity / problem framing | `opportunity-solution-tree` | OST from outcome → opportunities → solutions → experiments |
-| Full discovery cycle | `discovery-process` | Structured path from hypothesis to validated opportunity |
-| User research planning | `discovery-interview-prep` | Interview plan with methodology and question framework |
-| Customer voice / feedback mining | `voice-of-customer-miner` | Themed verbatims and unmet needs |
+| Opportunity / problem framing | `opportunity-solution-tree` | OST: outcome → opportunities → solutions → experiments |
+| Full discovery cycle | `discovery-process` | Hypothesis to validated opportunity |
+| User research planning | `discovery-interview-prep` | Interview plan with methodology |
+| Customer voice / feedback mining | `voice-of-customer-miner` | Themed verbatims, unmet needs |
 | Jobs to be done | `jobs-to-be-done` | Functional / social / emotional job map |
-| Persona refinement | `proto-persona` | Working persona hypothesis grounded in platform context |
-| Quick competitive comparison | `competitive-research-snapshot` | Cited snapshot in 20–40 min |
-| Deep competitive analysis | `competitive-analysis-process` | 6-step full analysis for strategy cycles |
-| Competitor battle card | `battle-card-builder` | Positioning artifact framed against SAP internal adjacencies |
-| Market landscape | `market-landscape-scan` | Segments, players, whitespace in SAP internal tooling space |
-| User story mapping | `user-story-mapping` | Wizard-step backbone with release slices |
-| Story splitting | `epic-breakdown-advisor` | INVEST-validated vertical slices with sequencing |
-| Sprint / PI planning | `aiplab-sprint-planning` (direct) | Sprint readiness brief, goal draft, dependency flags |
+| Persona refinement | `proto-persona` | Working persona hypothesis |
+| Quick competitive comparison | `competitive-research-snapshot` | Cited snapshot, 20–40 min |
+| Deep competitive analysis | `competitive-analysis-process` | 6-step full analysis |
+| Competitor battle card | `battle-card-builder` | Positioning artifact |
+| Market landscape | `market-landscape-scan` | Segments, players, whitespace |
+| User story mapping | `user-story-mapping` | Backbone with release slices |
+| Story splitting | `epic-breakdown-advisor` | INVEST-validated vertical slices |
 
-**Key rules baked in:**
-- Always reads the PRD before generating anything — PRD overrides user prompts on scope
-- Always syncs the feature registry from Jira before creating new features
-- Always pulls latest code from the 3 repos before drafting stories
-- Features go in ARTEAI; stories always go in GENAIPLAB
-- AC goes exclusively in `customfield_25640` (Okapya checklist format) — never in the description field
-- Default mode is read-only draft — never writes to Jira without explicit confirmation
-- After any delegation, output is interpreted through the PRD before being presented
+**Context blocks (the product-specific layer):**
 
-**How delegation works:**
+| Block | Injects | Used for |
+|---|---|---|
+| A — Platform & personas | Product description, wizard steps, patterns, formats, 3 personas, PRD principles | Research, discovery, JTBD, personas, OST, hypothesis |
+| B — Scope & constraints | SAP-internal only, current phase, wizard structure, module labels, deferred features, Jira routing | Story splitting, story mapping, Jira work |
+| C — Competitive framing | Internal adjacencies, decision context, internal adoption framing | All competitive and market work |
+| D — Stakeholder context | PO role, stakeholder types, MVP phase constraint, PRD authority | Incoming request decoding |
 
-When routing to a pm-skill, the skill pre-loads one or more context blocks as arguments so the pm-skill skips its usual onboarding questions and works directly with your product context:
+**Invariant rules (change these if your project differs):**
+- Always reads the PRD before generating — PRD overrides user prompts on scope
+- Always syncs feature registry from Jira before creating features
+- Always pulls latest code from repos before drafting stories
+- AC goes exclusively in `customfield_25640` — never in the description field
+- Default is read-only draft — never writes to Jira without explicit confirmation
 
-| Context block | Used for |
+---
+
+### `aiplab-sprint-planning` — Sprint and PI planning ⚑ Adapt for your project
+
+Reads live board state from Jira and produces a planning brief. Handles what `prototyping-lab-pm` can't: reasoning over the board as a whole rather than creating individual items.
+
+**What it checks:**
+
+| Step | Checks |
 |---|---|
-| A — Platform & personas | Research, discovery, JTBD, personas, OST, hypothesis |
-| B — Scope, structure & constraints | Story splitting, story mapping, Jira routing rules, 4-step wizard breakdown |
-| C — Competitive framing | All competitive and market intelligence work |
-| D — Stakeholder context | Incoming request decoding |
+| Readiness | Missing AC, no parent feature, no priority, no estimate, deferred stories |
+| Coverage | Which product modules are over/under-represented in the candidate pool |
+| Dependencies | Blocked stories, blocking stories, circular dependencies |
+| Sprint goal | Drafts "We deliver X so that [primary persona] can Y" |
+| PI mode | Maps stories to future sprints, surfaces features with no stories yet |
+
+**Project-specific content to update when adapting:** board ID, project keys, module labels, sprint goal persona name, deferred feature keys.
 
 ---
 
-### `aiplab-sprint-planning` — Sprint and PI planning assistant
+### `feature-to-user-stories` — Generic story decomposition ✅ Use as-is
 
-Reads live board state from Jira and produces a planning brief the team can act on. Unlike `prototyping-lab-pm` which creates and refines individual items, this skill reasons over the board holistically — story readiness, wizard step coverage, dependencies, and sprint goal.
+Converts any feature description, Jira key, PRD section, or epic into implementation-ready stories. No project-specific content — works on any product.
 
-**Triggers:** "sprint planning", "sprint goal", "what's ready to plan", "PI planning", "story readiness", "plan the next sprint", "backlog health"
+Produces: Given/When/Then AC, sizing, priority, dependencies, open questions, Jira-ready summary table.
 
-**What it does:**
-
-| Step | What it checks |
-|---|---|
-| Board fetch | Active sprint, backlog candidates, story details |
-| Readiness check | Missing AC, no parent feature, no priority, no estimate, deferred stories |
-| Coverage analysis | Which wizard steps (idea-intake → review-save) are over/under-represented |
-| Dependency flags | Blocked stories, blocking stories, circular dependencies |
-| Sprint goal draft | "We deliver X so that AI Business Innovator can Y" — one sentence |
-| Planning brief | Full structured output ready for the ceremony |
-
-**PI planning mode:** Maps stories to future sprints, surfaces features with no stories yet, flags gaps before the PI event.
-
-**Key rules:**
-- Read-only by default — never moves stories or changes sprint without confirmation
-- If a story needs AC before it can be pulled in, offers to write it via `prototyping-lab-pm`
-- Never touches ARTEAI-335 (deferred)
+Use this when you want lightweight story decomposition without the full pre-flight (auth, registry sync, repo pull) that `prototyping-lab-pm` runs.
 
 ---
 
-### `feature-to-user-stories` — Generic story decomposition
+### `arteai-feature-story` — Reference only, superseded
 
-A general-purpose skill for converting any feature description, Jira Feature key, PRD section, or epic into implementation-ready user stories. Not AI Prototyping Lab-specific — works for any product context.
-
-**Use this when:**
-- Working outside the AI Prototyping Lab context
-- You want lightweight story decomposition without the full prototyping-lab-pm pre-flight (auth, registry sync, git pulls)
-- You need a quick draft from a pasted feature description
-
-**Does not include:** Jira field validation, feature registry sync, codebase cross-reference, or the routing table. For AI Prototyping Lab work, use `prototyping-lab-pm` instead.
-
-**Produces:** Full story set with Given/When/Then AC, sizing, priority, dependencies, open questions, and a Jira-ready summary table.
+The original feature and story skill. Predates the routing table, INVEST gate, Humanizing Work splitting patterns, and pm-skill delegation. Kept for reference. Use `prototyping-lab-pm` for all active work.
 
 ---
 
-### `arteai-feature-story` — Earlier generation (superseded)
+### `genaiplab-ac-audit` workflow — ⚑ Adapt for your project
 
-The original feature and story skill for the AI Prototyping Lab. Covers the same core workflow as `prototyping-lab-pm` but predates: the feature registry sync, the 3-repo git pull requirement, the request routing table, the INVEST gate, the Humanizing Work splitting patterns, and the research/competitive delegation to pm-skills.
+Audits all stories in a Jira project for AC field compliance — checks whether AC is in the correct custom field vs. incorrectly written into the description. Produces a fix list.
 
-**Status:** Kept for reference. For all active work, use `prototyping-lab-pm`.
+Run after batch story creation or to audit backlog compliance. Update the project key and key ranges before using on a different project.
 
 ---
 
 ## Skill relationships
 
 ```
-prototyping-lab-pm  ◄──── single entry point for all AI Prototyping Lab PM work
+prototyping-lab-pm  ◄──── single entry point (invoke this for all PM work)
     │
-    ├── executes directly ──► feature creation (ARTEAI)
-    ├── executes directly ──► story creation (GENAIPLAB, board 62344)
-    ├── executes directly ──► aiplab-sprint-planning (sprint / PI planning)
+    ├── direct ──────────────► feature creation (Jira)
+    ├── direct ──────────────► story creation (Jira)
+    ├── direct ──────────────► aiplab-sprint-planning
     │
-    ├── [context block D] ──► pm-essentials:incoming-request-advisor   (decode stakeholder ask)
-    ├── [context A + B]   ──► pm-essentials:epic-hypothesis             (frame as testable bet)
-    ├── [context block A] ──► pm-essentials:opportunity-solution-tree   (problem framing)
-    ├── [context block A] ──► pm-essentials:discovery-process           (full discovery cycle)
-    ├── [context block A] ──► pm-essentials:discovery-interview-prep    (interview planning)
-    ├── [context block A] ──► pm-essentials:voice-of-customer-miner     (VOC / feedback mining)
-    ├── [context block A] ──► pm-essentials:jobs-to-be-done             (JTBD)
-    ├── [context A + B]   ──► pm-essentials:proto-persona               (persona refinement)
-    ├── [context block C] ──► pm-essentials:competitive-research-snapshot (quick comparison)
-    ├── [context block C] ──► pm-essentials:competitive-analysis-process  (deep analysis)
-    ├── [context block C] ──► pm-essentials:battle-card-builder           (battle card)
-    ├── [context block C] ──► pm-essentials:market-landscape-scan         (landscape)
-    ├── [context A + B]   ──► pm-essentials:user-story-mapping            (story map)
-    └── [context block B] ──► pm-essentials:epic-breakdown-advisor        (story splitting)
+    ├── [block D] ───────────► pm-essentials:incoming-request-advisor
+    ├── [block A+B] ─────────► pm-essentials:epic-hypothesis
+    ├── [block A] ───────────► pm-essentials:opportunity-solution-tree
+    ├── [block A] ───────────► pm-essentials:discovery-process
+    ├── [block A] ───────────► pm-essentials:discovery-interview-prep
+    ├── [block A] ───────────► pm-essentials:voice-of-customer-miner
+    ├── [block A] ───────────► pm-essentials:jobs-to-be-done
+    ├── [block A+B] ─────────► pm-essentials:proto-persona
+    ├── [block C] ───────────► pm-essentials:competitive-research-snapshot
+    ├── [block C] ───────────► pm-essentials:competitive-analysis-process
+    ├── [block C] ───────────► pm-essentials:battle-card-builder
+    ├── [block C] ───────────► pm-essentials:market-landscape-scan
+    ├── [block A+B] ─────────► pm-essentials:user-story-mapping
+    └── [block B] ───────────► pm-essentials:epic-breakdown-advisor
 
-aiplab-sprint-planning   ◄── sprint/PI planning, reads live Jira board state directly
-feature-to-user-stories  ◄── generic, reusable on any product
-arteai-feature-story     ◄── superseded by prototyping-lab-pm
+aiplab-sprint-planning   ◄── reads Jira board state, produces planning brief
+feature-to-user-stories  ◄── generic, no project-specific content
+arteai-feature-story     ◄── superseded
 ```
 
-pm-skills are installed separately via `/plugin marketplace add deanpeters/Product-Manager-Skills` and are not committed to this repo. `prototyping-lab-pm` delegates to them at runtime.
+pm-skills are installed separately — not committed to this repo. See [Dependencies](#dependencies).
 
 ---
 
-## Workflow
+## Adapting for your project
 
-### `genaiplab-ac-audit`
+### Reusability map
 
-Audits all GENAIPLAB stories to check whether Acceptance Criteria are in the correct field (`customfield_25640`) vs. incorrectly in the description field. Produces a fix list of stories that need remediation.
-
-**Run when:** After a batch story creation session, or to verify AC field compliance across the backlog.
-
----
-
-## Platform context (quick reference)
-
-**Product:** AI Prototyping Lab — SAP-internal platform for governed, reusable AI prototyping.
-
-**Core concept:** Pattern × Format × Tool
-
-**4-step wizard:** Idea Intake → Pattern & Setup → Test & Preview → Review & Save
-
-**Patterns:** Content Summarization, Data Extraction, Knowledge Q&A, Document Review & Comparison
-
-**Formats:** n8n Workflow, Web Application (Full Project / Standalone HTML / Production-ready IRAD-BTP)
-
-**Personas:**
-| Persona | Role | Phase |
+| Skill | What to keep | What to replace |
 |---|---|---|
-| AI Business Innovator (No-Code) | Product Managers, Designers, BPEs, Innovation Teams | Active MVP target |
-| Citizen AI Developer (Low-Code) | Solution Architects, Consultants | KIV post-MVP |
-| Agentic AI Engineer (Pro-Code) | AI Engineers, Technical POs | Coming Soon |
+| `prototyping-lab-pm` | Routing table structure, context block mechanism, all delegation logic, invariant rules | Context blocks A–D, Jira field IDs, file paths, repo paths |
+| `aiplab-sprint-planning` | All 6 steps, PI planning mode, readiness checks, safety rules | Board ID, project keys, module labels, sprint goal persona, deferred feature keys |
+| `feature-to-user-stories` | Everything | Nothing — use as-is |
+| `genaiplab-ac-audit.js` | Workflow structure, audit logic | Project key, key ranges |
 
-**Jira projects:**
-| Project | Purpose |
-|---|---|
-| `ARTEAI` | Features (issue type ID `11500`) |
-| `GENAIPLAB` | User stories (board ID `62344`) |
+### Step-by-step: adapting `prototyping-lab-pm`
 
----
+**1. Jira configuration**
 
-## Reusing these skills on another project
+In the feature creation fields section, update:
+```json
+"project": { "key": "YOUR-FEATURE-PROJECT" }     // was ARTEAI
+"issuetype": { "id": "YOUR-FEATURE-ISSUE-TYPE-ID" } // was 11500
+"components": [{ "id": "YOUR-COMPONENT-ID" }]     // was 334205
+"customfield_29648": [{ "id": "YOUR-PLATFORM-ID" }] // platform field — remove if not applicable
+"customfield_48641": [{ "id": "YOUR-DELIVERY-ID" }] // delivery setup — remove if not applicable
+```
 
-`prototyping-lab-pm` and `arteai-feature-story` are project-specific. To adapt them:
+For stories:
+```
+projectKey: "YOUR-STORY-PROJECT"    // was GENAIPLAB
+boardId: YOUR-BOARD-ID              // was 62344
+customfield_25640                   // AC field — verify this ID exists in your project
+```
 
-1. Update Jira project keys (`ARTEAI` → your feature project, `GENAIPLAB` → your story project)
-2. Update board ID (`62344` → your scrum board)
-3. Update custom field IDs (`customfield_25640`, `customfield_29648`, `customfield_48641`)
-4. Update component ID (`334205`) and label taxonomy
-5. Replace file paths with your local paths
-6. Replace the platform context section and context blocks A–D with your product's personas, modules, principles, and stakeholder types
-7. Update the competitive adjacencies in context block C
+**2. Context block A — Platform & personas**
 
-`feature-to-user-stories` is generic and reusable as-is.
+Replace the product description, wizard/workflow steps, patterns, formats, and personas with your product's equivalents. Keep the same structure — it's what the pm-skills read to skip their onboarding questions.
+
+```
+Platform: [Your product name and one-line description]
+Core concept: [Your product's core model]
+Workflow: [Your key workflow steps, e.g. intake → configure → test → ship]
+Target users — [N] personas:
+1. [Persona name] — [Roles]. [Phase/status].
+...
+Product principles: [2-3 governing principles]
+```
+
+**3. Context block B — Scope & constraints**
+
+Replace:
+- Scope description (SAP-internal → your org/market)
+- Current phase
+- Workflow structure with your module names and step descriptions
+- Module labels (used as Jira labels)
+- Any deferred features or hard out-of-scope items
+
+**4. Context block C — Competitive framing**
+
+Replace:
+- The 5 named adjacencies with your actual competitors or internal alternatives
+- The decision context (roadmap prioritisation within X)
+- Scope framing (internal adoption → your actual market/context)
+- PRD file path
+
+**5. Context block D — Stakeholder context**
+
+Replace:
+- Your role/title
+- Your actual stakeholder types
+- Current phase and scope governance model
+
+**6. File paths**
+
+Search and replace `C:\Users\I543296\OneDrive - SAP SE\Desktop\AI Prototyping Lab\` with your project root.
+
+**7. Repo paths**
+
+Update the 3 git pull commands in "Before doing anything" with your actual repo paths, or remove if you don't have multiple repos to sync.
+
+### Step-by-step: adapting `aiplab-sprint-planning`
+
+1. Replace `boardId: 62344` with your board ID
+2. Replace `project = GENAIPLAB` with your story project key
+3. Replace `project = ARTEAI` with your feature project key
+4. Replace module labels (`idea-intake`, `pattern-setup`, etc.) with your product's module taxonomy
+5. Update the sprint goal template persona ("AI Business Innovator") with your primary persona name
+6. Remove or replace the ARTEAI-335 deferred feature reference
+
+### Step-by-step: adapting `genaiplab-ac-audit.js`
+
+1. Replace `GENAIPLAB` with your story project key
+2. Update the key ranges in the `ranges` array to match your project's issue key range
+3. If your AC field is not `customfield_25640`, update the field name throughout
 
 ---
 
 ## Dependencies
 
-These skills rely on:
-- **Claude Code** with the `sap-auth` and `sap-jira` MCP servers connected
-- **pm-essentials marketplace** — install with `/plugin marketplace add deanpeters/Product-Manager-Skills`
-- Local file access to `prd.md`, `features/`, and the 3 product repos (`prototypinglab-ui`, `prototypinglab-builder`, `prototypinglab-mcpserver`)
+**Required for all skills:**
+- [Claude Code](https://claude.ai/code) — the CLI that runs skills
+- A Jira MCP server connected to your Jira instance
+  - This repo uses `sap-jira` and `sap-auth` — replace with your own MCP server if using a different Jira setup
+  - Any Jira MCP server that exposes `search_issues`, `get_issue`, `create_issue`, `update_issue`, and `get_board_issues` will work
+
+**Required for pm-skill delegation (research, competitive, splitting):**
+- pm-essentials marketplace: `/plugin marketplace add deanpeters/Product-Manager-Skills`
+- These skills are not committed to this repo — they install to `~/.claude/plugins/marketplaces/pm-skills/`
+
+**Required for `prototyping-lab-pm` specifically:**
+- A PRD file at the path specified in context block C
+- A features registry folder (`features/SYNC-STATUS.md`)
+- Local access to your product repos (for story technical notes)
+
+---
+
+## Quick start
+
+### If you're on the AI Prototyping Lab
+
+```bash
+git clone https://github.com/brucelanlin/product-playbook.git .claude
+# Install pm-skills
+/plugin marketplace add deanpeters/Product-Manager-Skills
+# Authenticate with Jira
+# Then just talk to Claude — prototyping-lab-pm triggers automatically
+```
+
+### If you're adapting for your own project
+
+```bash
+git clone https://github.com/brucelanlin/product-playbook.git .claude
+# Follow the adaptation steps above for each skill you want to use
+# feature-to-user-stories works immediately with no changes
+# Install pm-skills if you want research/competitive delegation
+/plugin marketplace add deanpeters/Product-Manager-Skills
+```
 
 ---
 
@@ -217,9 +307,9 @@ These skills rely on:
 After editing any skill or workflow:
 
 ```bash
-cd "/path/to/AI Prototyping Lab/.claude"
+cd /path/to/your/project/.claude
 git add skills/ workflows/
-git commit -m "description of what changed"
+git commit -m "describe what changed and why"
 git push
 ```
 
