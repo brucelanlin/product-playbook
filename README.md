@@ -1,4 +1,21 @@
-# product-playbook
+# pm-cockpit
+
+```
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║   ██████╗ ███╗   ███╗     ██████╗ ██████╗  ██████╗██╗  ██╗██╗████████╗
+║   ██╔══██╗████╗ ████║    ██╔════╝██╔═══██╗██╔════╝██║ ██╔╝██║╚══██╔══╝
+║   ██████╔╝██╔████╔██║    ██║     ██║   ██║██║     █████╔╝ ██║   ██║
+║   ██╔═══╝ ██║╚██╔╝██║    ██║     ██║   ██║██║     ██╔═██╗ ██║   ██║
+║   ██║     ██║ ╚═╝ ██║    ╚██████╗╚██████╔╝╚██████╗██║  ██╗██║   ██║
+║   ╚═╝     ╚═╝     ╚═╝     ╚═════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝   ╚═╝
+║                                                                    ║
+║   Claude Code PM skills for the AI Prototyping Lab                 ║
+║   Single entry point · 24 routes · Jira-native · Context-aware    ║
+║                                                                    ║
+║   Built by Bruce · SAP AI Prototyping Lab · 2026                   ║
+╚════════════════════════════════════════════════════════════════════╝
+```
 
 A Claude Code PM skill system for product teams using Jira. Built for the AI Prototyping Lab at SAP, but structured so the pattern is reusable on any product.
 
@@ -365,7 +382,7 @@ Update the 3 git pull commands in "Before doing anything" with your actual repo 
 ### If you're on the AI Prototyping Lab
 
 ```bash
-git clone https://github.com/brucelanlin/product-playbook.git .claude
+git clone https://github.com/brucelanlin/pm-cockpit.git .claude
 # Install pm-skills
 /plugin marketplace add deanpeters/Product-Manager-Skills
 # Authenticate with Jira
@@ -375,7 +392,7 @@ git clone https://github.com/brucelanlin/product-playbook.git .claude
 ### If you're adapting for your own project
 
 ```bash
-git clone https://github.com/brucelanlin/product-playbook.git .claude
+git clone https://github.com/brucelanlin/pm-cockpit.git .claude
 # Follow the adaptation steps above for each skill you want to use
 # feature-to-user-stories works immediately with no changes
 # Install pm-skills if you want research/competitive delegation
