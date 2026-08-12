@@ -483,6 +483,42 @@ Run this check on the final story before closing the session. Flag any failure e
 
 ---
 
+## Story content rules
+
+These rules apply to every GENAIPLAB story created or updated — new or refined.
+
+### Description structure
+
+Use this section order every time:
+1. Persona line (As a / I want / so that) — no `*User Story*` header
+2. `*Background*` — what exists today and why this story is needed
+3. `*In Scope*` — what will be delivered, as bullet points
+4. `*Out of Scope*` — explicit deferrals and boundaries
+5. `*Dependencies*` — other stories, features, or people. Hard blockers named here, not inline
+6. `*Assumptions*` — documented so developers don't have to guess
+7. `*Estimated Size*` — indicative only; team confirms at refinement
+
+### What goes in descriptions
+
+- **Keep:** persona, background context, in scope, out of scope, dependencies, assumptions, size
+- **Remove:** technical decisions, pre-implementation checklists, architect/developer notes, internal symbol names, file paths, function names, Redux actions, TypeScript type names
+- **Replace internal references with plain English** — "the builder generates CAP artifacts" not "build_generation_prompt() branches on output_type"
+- **Hard dependencies on people** go in Dependencies only — not scattered inline
+
+### What goes in AC
+
+- Every item: Given/When/Then with an observable outcome
+- No internal symbol names — describe what the user or system observes, not how the code does it
+- No resolved design questions — remove obsolete AC items when the question has been answered
+
+### Persona rules
+
+- Always a named platform persona: AI Business Innovator, Citizen AI Developer, Agentic AI Engineer
+- Never: "a user", "the platform", "a developer", "the system"
+- "So that" must explain motivation — not restate the action
+
+---
+
 ## Writing tone
 
 Content must feel like it came from someone who understands the product deeply, not from a tool generating filler. Apply these rules:
