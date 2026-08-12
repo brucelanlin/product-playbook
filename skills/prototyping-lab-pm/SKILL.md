@@ -1,5 +1,6 @@
 ---
 name: prototyping-lab-pm
+type: workflow
 description: Use this skill whenever the user mentions creating, updating, writing, reviewing, refining, or managing features, user stories, or backlog items for the AI Prototyping Lab platform. Triggers on: "create a feature", "write a story", "add a user story", "new feature for", "help me with a Jira", "update this feature", "generate stories", "create stories for", "backlog", "ARTEAI", "GENAIPLAB", "feature spec", "refine this feature", "story for", "acceptance criteria", "AC for", "sprint planning", "backlog refinement", "PI planning", or anything that sounds like product backlog work for the prototyping lab. Always use this skill before writing any Jira content — it governs the full workflow from clarification through post-creation audit. Use it even if the user hasn't explicitly asked for a "feature" or "story" — if they describe a capability they want built or tracked, this skill applies.
 ---
 

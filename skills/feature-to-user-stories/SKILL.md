@@ -1,5 +1,6 @@
 ---
 name: feature-to-user-stories
+type: component
 description: Secondary skill for converting Jira Features, epics, PRD sections, or feature descriptions into implementation-ready user stories. For AI Prototyping Lab work, prefer the prototyping-lab-pm skill instead — it includes the full workflow (PRD check, code repo cross-reference, Jira field validation, post-creation audit). Use this skill only for non-prototyping-lab story work or when explicitly invoked.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: aiplab-sprint-planning
+type: workflow
 description: Use this skill when the user wants to prepare for sprint planning, review sprint readiness, draft a sprint goal, check story health, or plan a PI. Triggers on: "sprint planning", "prepare for planning", "sprint goal", "sprint review", "what's ready to plan", "PI planning", "story readiness", "what's in the sprint", "plan the next sprint", "backlog health", or any request to reason over the current state of the GENAIPLAB board before a planning ceremony.
 ---
 

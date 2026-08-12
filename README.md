@@ -2,7 +2,53 @@
 
 A Claude Code PM skill system for product teams using Jira. Built for the AI Prototyping Lab at SAP, but structured so the pattern is reusable on any product.
 
-The core idea: one primary skill acts as a single entry point for all PM work. It identifies the request type, injects your product context, and routes to the right tool — whether that's writing a Jira feature spec, splitting stories, planning a sprint, or running a competitive snapshot. You never have to remember which skill to invoke.
+The core idea: one primary skill acts as a single entry point for all PM work. It identifies the request type, injects your product context, and routes to the right tool. You never have to remember which skill to invoke.
+
+---
+
+## What you can get done
+
+Navigate by what you're trying to accomplish:
+
+**Jira backlog work**
+- Create or refine a feature spec → 9-section ARTEAI feature
+- Write or refine a user story → GENAIPLAB story with Given/When/Then AC
+- Simplify an existing story → fix persona, strip technical detail, INVEST check
+- Update the PRD → section-level update grounded in feature registry
+
+**Planning ceremonies**
+- Prepare for sprint planning → readiness brief, coverage gaps, dependency flags, sprint goal draft
+- PI planning → feature-to-sprint mapping, surface stories not yet written
+
+**Framing and strategy**
+- Frame a problem before jumping to solutions → `problem-framing-canvas`
+- Write a positioning statement → `positioning-statement`
+- Decode a stakeholder request → `incoming-request-advisor`
+- Frame an initiative as a testable bet → `epic-hypothesis`
+- Turn a vague request into a problem worth solving → `opportunity-solution-tree`
+
+**Discovery and research**
+- Plan user interviews → `discovery-interview-prep`
+- Mine existing feedback for unmet needs → `voice-of-customer-miner`
+- Map what users are trying to accomplish → `jobs-to-be-done`
+- Run a full discovery cycle → `discovery-process`
+- Validate a hypothesis cheaply → `pol-probe-advisor`
+
+**Stakeholder alignment**
+- Identify all stakeholders for an initiative → `stakeholder-identification`
+- Map power, interest, and engagement strategy → `stakeholder-mapping`
+
+**Competitive and market intelligence**
+- Quick comparison against internal adjacencies → `competitive-research-snapshot`
+- Full competitive analysis → `competitive-analysis-process`
+- Build a battle card → `battle-card-builder`
+- Map the internal tooling landscape → `market-landscape-scan`
+
+**Story and backlog quality**
+- Split a large epic → `epic-breakdown-advisor`
+- Map a full user journey → `user-story-mapping`
+
+> **Arriving empty-handed? That's fine.** For research, competitive, and strategy routes, you can invoke with just a question or a Jira URL — the context blocks handle the rest. Full pre-flight (auth, registry sync, repo pull) only runs for feature and story creation.
 
 ---
 
@@ -16,14 +62,14 @@ The core idea: one primary skill acts as a single entry point for all PM work. I
 
 ## What's in this repo
 
-| Path | Reusable? | Description |
-|---|---|---|
-| `skills/prototyping-lab-pm/` | Adapt | Primary PM skill — routing table + platform context blocks |
-| `skills/aiplab-sprint-planning/` | Adapt | Sprint/PI planning — reads live Jira board state |
-| `skills/feature-to-user-stories/` | ✅ Yes | Generic story decomposition, no project-specific content |
-| `workflows/genaiplab-ac-audit.js` | Adapt | AC field compliance audit — Jira project keys need updating |
-| `archive/arteai-feature-story/` | Reference | Earlier version of prototyping-lab-pm, superseded — kept for reference |
-| `CHANGELOG.md` | — | Running log of changes with rationale |
+| Path | Type | Reusable? | Description |
+|---|---|---|---|
+| `skills/prototyping-lab-pm/` | Workflow | Adapt | Primary skill — single entry point, 24 routes, platform context blocks |
+| `skills/aiplab-sprint-planning/` | Workflow | Adapt | Sprint/PI planning — reads live Jira board state |
+| `skills/feature-to-user-stories/` | Component | ✅ Yes | Generic story decomposition, no project-specific content |
+| `workflows/genaiplab-ac-audit.js` | Workflow | Adapt | AC field compliance audit — Jira project keys need updating |
+| `archive/arteai-feature-story/` | — | Reference | Earlier version of prototyping-lab-pm, superseded |
+| `CHANGELOG.md` | — | — | Running log of changes with rationale |
 
 ---
 
