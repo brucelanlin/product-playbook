@@ -21,8 +21,9 @@ The core idea: one primary skill acts as a single entry point for all PM work. I
 | `skills/prototyping-lab-pm/` | Adapt | Primary PM skill — routing table + platform context blocks |
 | `skills/aiplab-sprint-planning/` | Adapt | Sprint/PI planning — reads live Jira board state |
 | `skills/feature-to-user-stories/` | ✅ Yes | Generic story decomposition, no project-specific content |
-| `skills/arteai-feature-story/` | Reference only | Earlier version of prototyping-lab-pm, superseded |
 | `workflows/genaiplab-ac-audit.js` | Adapt | AC field compliance audit — Jira project keys need updating |
+| `archive/arteai-feature-story/` | Reference | Earlier version of prototyping-lab-pm, superseded — kept for reference |
+| `CHANGELOG.md` | — | Running log of changes with rationale |
 
 ---
 
@@ -71,6 +72,7 @@ The single entry point. Invoke this for any PM request — it routes internally.
 | Market landscape | `market-landscape-scan` | Segments, players, whitespace |
 | User story mapping | `user-story-mapping` | Backbone with release slices |
 | Story splitting | `epic-breakdown-advisor` | INVEST-validated vertical slices |
+| Story refinement | Direct (Jira MCP) | Simplified description + AC, INVEST check, persona fix |
 
 **Context blocks (the product-specific layer):**
 
@@ -118,9 +120,30 @@ Use this when you want lightweight story decomposition without the full pre-flig
 
 ---
 
-### `arteai-feature-story` — Reference only, superseded
+### `arteai-feature-story` — Archived, superseded
 
-The original feature and story skill. Predates the routing table, INVEST gate, Humanizing Work splitting patterns, and pm-skill delegation. Kept for reference. Use `prototyping-lab-pm` for all active work.
+The original feature and story skill. Predates the routing table, INVEST gate, Humanizing Work splitting patterns, and pm-skill delegation. Moved to `archive/` — use `prototyping-lab-pm` for all active work.
+
+---
+
+### Refining existing stories
+
+One of the most frequent use cases: taking an existing story and simplifying it for the team. Trigger with "simplify this story", "refine this Jira", "apply the same treatment", or just paste a Jira URL.
+
+The skill applies a consistent treatment in 5 steps:
+1. **Fetch** the story from Jira
+2. **Analyse** — persona, description structure, AC quality, INVEST criteria
+3. **Propose** changes to Bruce before touching anything
+4. **Apply** description and AC in a single update
+5. **INVEST check** on the final state — reported alongside the confirmation
+
+**Story content rules baked in:**
+- No `*User Story*` header — redundant given Jira issue type
+- No technical decisions, architect notes, or implementation checklists
+- Description structure: persona → background → in scope → out of scope → dependencies → assumptions → size
+- Plain English in AC — no internal symbol names, variable names, or function calls
+- Persona must be a named platform persona, never "a user" or "the platform"
+- "So that" must explain motivation, not restate the action
 
 ---
 
@@ -139,6 +162,7 @@ prototyping-lab-pm  ◄──── single entry point (invoke this for all PM w
     │
     ├── direct ──────────────► feature creation (Jira)
     ├── direct ──────────────► story creation (Jira)
+    ├── direct ──────────────► story refinement (Jira — simplify, INVEST, persona fix)
     ├── direct ──────────────► aiplab-sprint-planning
     │
     ├── [block D] ───────────► pm-essentials:incoming-request-advisor
@@ -158,7 +182,7 @@ prototyping-lab-pm  ◄──── single entry point (invoke this for all PM w
 
 aiplab-sprint-planning   ◄── reads Jira board state, produces planning brief
 feature-to-user-stories  ◄── generic, no project-specific content
-arteai-feature-story     ◄── superseded
+archive/arteai-feature-story  ◄── superseded, kept for reference
 ```
 
 pm-skills are installed separately — not committed to this repo. See [Dependencies](#dependencies).
