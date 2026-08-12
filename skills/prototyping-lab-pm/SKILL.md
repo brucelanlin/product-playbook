@@ -338,7 +338,6 @@ Use this format for each story:
 **Jira Summary**
 `<50–70 character summary — action-oriented, no filler>`
 
-**User Story**
 As a <specific persona>,
 I want to <concrete capability>,
 so that <measurable user or business value>.
@@ -464,7 +463,20 @@ After creating any feature or story, run these checks before reporting back:
 - New feature created: add `<number>-<kebab-title>.md` to `features\`
 - New story added: note it in the local feature file under the relevant section
 
-**5. Code cross-reference**
+**5. INVEST check — for every story created or updated**
+
+Run this check on the final story before closing the session. Flag any failure explicitly rather than silently passing.
+
+| Criterion | Check | On failure |
+|---|---|---|
+| Independent | Can this be prioritised and built without a hard dependency on another in-flight story? | Document the dependency; flag if it blocks sprint entry |
+| Negotiable | Does the description leave implementation decisions to the developer? | Remove prescriptive implementation details; use "one approach:" framing |
+| Valuable | Does it deliver observable value to a named persona (not "the platform" or "a developer")? | Reframe persona and "so that"; if no user value exists, consider combining with another story |
+| Estimable | Can the team size it? Are open questions documented so they can be resolved before pointing? | Flag unresolved blockers in the story; do not force an estimate |
+| Small | Does it fit within a sprint? Is it scoped to one capability, not a bundle? | Flag for splitting; use the story splitting strategy section |
+| Testable | Does every AC item have a Given/When/Then with an observable outcome — not an internal implementation detail? | Rewrite failing AC items before saving |
+
+**6. Code cross-reference**
 - Check whether the codebase already implements the capability described
 - If yes: note it in a comment on the Jira issue so the team knows the starting point
 - Verify any component or interface names used in technical notes match the actual repo
