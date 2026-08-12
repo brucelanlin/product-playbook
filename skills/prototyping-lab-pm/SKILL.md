@@ -33,6 +33,7 @@ This skill is the single entry point for all product work on the AI Prototyping 
 | Market landscape | "what else is out there", "market map", "who plays in this space", "internal tooling landscape" | `pm-essentials:market-landscape-scan` | Inject context block C |
 | User story mapping | "story map", "map the workflow", "backbone for", "full user journey" | `pm-essentials:user-story-mapping` | Inject context block A + B — use for planning a whole wizard step or release slice |
 | Story splitting advice | "too big to split", "how to split", "break this down", "this epic is too large" | `pm-essentials:epic-breakdown-advisor` | Inject context block B |
+| Sprint planning | "sprint planning", "sprint goal", "what's ready to plan", "PI planning", "story readiness", "plan the next sprint", "backlog health" | `aiplab-sprint-planning` | Execute directly — reads live board state from Jira |
 
 ### How to delegate
 

@@ -9,6 +9,7 @@ Claude Code skills and workflows for the AI Prototyping Lab — a SAP-internal p
 ```
 skills/
   prototyping-lab-pm/       # Primary skill — all PM work enters here
+  aiplab-sprint-planning/   # Sprint and PI planning assistant — reads live Jira board state
   arteai-feature-story/     # Earlier feature+story skill (superseded by prototyping-lab-pm)
   feature-to-user-stories/  # Generic story decomposition skill (reusable on any product)
 workflows/
@@ -43,6 +44,7 @@ workflows/
 | Market landscape | `market-landscape-scan` | Segments, players, whitespace in SAP internal tooling space |
 | User story mapping | `user-story-mapping` | Wizard-step backbone with release slices |
 | Story splitting | `epic-breakdown-advisor` | INVEST-validated vertical slices with sequencing |
+| Sprint / PI planning | `aiplab-sprint-planning` (direct) | Sprint readiness brief, goal draft, dependency flags |
 
 **Key rules baked in:**
 - Always reads the PRD before generating anything — PRD overrides user prompts on scope
@@ -63,6 +65,32 @@ When routing to a pm-skill, the skill pre-loads one or more context blocks as ar
 | B — Scope, structure & constraints | Story splitting, story mapping, Jira routing rules, 4-step wizard breakdown |
 | C — Competitive framing | All competitive and market intelligence work |
 | D — Stakeholder context | Incoming request decoding |
+
+---
+
+### `aiplab-sprint-planning` — Sprint and PI planning assistant
+
+Reads live board state from Jira and produces a planning brief the team can act on. Unlike `prototyping-lab-pm` which creates and refines individual items, this skill reasons over the board holistically — story readiness, wizard step coverage, dependencies, and sprint goal.
+
+**Triggers:** "sprint planning", "sprint goal", "what's ready to plan", "PI planning", "story readiness", "plan the next sprint", "backlog health"
+
+**What it does:**
+
+| Step | What it checks |
+|---|---|
+| Board fetch | Active sprint, backlog candidates, story details |
+| Readiness check | Missing AC, no parent feature, no priority, no estimate, deferred stories |
+| Coverage analysis | Which wizard steps (idea-intake → review-save) are over/under-represented |
+| Dependency flags | Blocked stories, blocking stories, circular dependencies |
+| Sprint goal draft | "We deliver X so that AI Business Innovator can Y" — one sentence |
+| Planning brief | Full structured output ready for the ceremony |
+
+**PI planning mode:** Maps stories to future sprints, surfaces features with no stories yet, flags gaps before the PI event.
+
+**Key rules:**
+- Read-only by default — never moves stories or changes sprint without confirmation
+- If a story needs AC before it can be pulled in, offers to write it via `prototyping-lab-pm`
+- Never touches ARTEAI-335 (deferred)
 
 ---
 
@@ -96,6 +124,7 @@ prototyping-lab-pm  ◄──── single entry point for all AI Prototyping La
     │
     ├── executes directly ──► feature creation (ARTEAI)
     ├── executes directly ──► story creation (GENAIPLAB, board 62344)
+    ├── executes directly ──► aiplab-sprint-planning (sprint / PI planning)
     │
     ├── [context block D] ──► pm-essentials:incoming-request-advisor   (decode stakeholder ask)
     ├── [context A + B]   ──► pm-essentials:epic-hypothesis             (frame as testable bet)
@@ -112,6 +141,7 @@ prototyping-lab-pm  ◄──── single entry point for all AI Prototyping La
     ├── [context A + B]   ──► pm-essentials:user-story-mapping            (story map)
     └── [context block B] ──► pm-essentials:epic-breakdown-advisor        (story splitting)
 
+aiplab-sprint-planning   ◄── sprint/PI planning, reads live Jira board state directly
 feature-to-user-stories  ◄── generic, reusable on any product
 arteai-feature-story     ◄── superseded by prototyping-lab-pm
 ```
