@@ -73,6 +73,12 @@ The single entry point. Invoke this for any PM request — it routes internally.
 | User story mapping | `user-story-mapping` | Backbone with release slices |
 | Story splitting | `epic-breakdown-advisor` | INVEST-validated vertical slices |
 | Story refinement | Direct (Jira MCP) | Simplified description + AC, INVEST check, persona fix |
+| Problem framing | `problem-framing-canvas` | MITRE Look Inward/Outward/Reframe — use before OST when the problem is unclear |
+| Positioning statement | `positioning-statement` | Geoffrey Moore template framed for SAP internal tooling |
+| Stakeholder identification | `stakeholder-identification` | Brainstorm → allies/audiences/influencers → priority targets |
+| Stakeholder mapping | `stakeholder-mapping` | Power × Interest + Impact × Power grids |
+| Validation / proof of life | `pol-probe-advisor` | Recommends cheapest prototype type for the hypothesis |
+| PRD refinement | Direct (file write) | Read prd.md + feature registry, propose section update, write on confirmation |
 
 **Context blocks (the product-specific layer):**
 
@@ -162,21 +168,27 @@ prototyping-lab-pm  ◄──── single entry point (invoke this for all PM w
     │
     ├── direct ──────────────► feature creation (Jira)
     ├── direct ──────────────► story creation (Jira)
-    ├── direct ──────────────► story refinement (Jira — simplify, INVEST, persona fix)
+    ├── direct ──────────────► story refinement (Jira)
+    ├── direct ──────────────► PRD refinement (prd.md)
     ├── direct ──────────────► aiplab-sprint-planning
     │
     ├── [block D] ───────────► pm-essentials:incoming-request-advisor
     ├── [block A+B] ─────────► pm-essentials:epic-hypothesis
     ├── [block A] ───────────► pm-essentials:opportunity-solution-tree
+    ├── [block A] ───────────► pm-essentials:problem-framing-canvas
     ├── [block A] ───────────► pm-essentials:discovery-process
     ├── [block A] ───────────► pm-essentials:discovery-interview-prep
     ├── [block A] ───────────► pm-essentials:voice-of-customer-miner
     ├── [block A] ───────────► pm-essentials:jobs-to-be-done
     ├── [block A+B] ─────────► pm-essentials:proto-persona
+    ├── [block A] ───────────► pm-essentials:pol-probe-advisor
+    ├── [block C] ───────────► pm-essentials:positioning-statement
     ├── [block C] ───────────► pm-essentials:competitive-research-snapshot
     ├── [block C] ───────────► pm-essentials:competitive-analysis-process
     ├── [block C] ───────────► pm-essentials:battle-card-builder
     ├── [block C] ───────────► pm-essentials:market-landscape-scan
+    ├── [block E] ───────────► pm-essentials:stakeholder-identification
+    ├── [block E] ───────────► pm-essentials:stakeholder-mapping
     ├── [block A+B] ─────────► pm-essentials:user-story-mapping
     └── [block B] ───────────► pm-essentials:epic-breakdown-advisor
 

@@ -35,6 +35,12 @@ This skill is the single entry point for all product work on the AI Prototyping 
 | Story splitting advice | "too big to split", "how to split", "break this down", "this epic is too large" | `pm-essentials:epic-breakdown-advisor` | Inject context block B |
 | Sprint planning | "sprint planning", "sprint goal", "what's ready to plan", "PI planning", "story readiness", "plan the next sprint", "backlog health" | `aiplab-sprint-planning` | Execute directly — reads live board state from Jira |
 | Story refinement | "simplify this story", "refine this story", "clean up this Jira", "apply the same treatment", "update and simplify", paste of a Jira URL | This skill (execute directly) | Fetch story, apply story content rules, fix persona, simplify description, check INVEST, simplify AC, update in Jira |
+| Problem framing | "what problem are we solving", "frame the problem", "stop us jumping to solutions", "we don't know what problem this is" | `pm-essentials:problem-framing-canvas` | Inject context block A — use before OST or feature spec when the problem itself is unclear |
+| Positioning statement | "how do we position", "write a positioning statement", "how are we different", "what makes us distinct" | `pm-essentials:positioning-statement` | Inject context block C — Geoffrey Moore template framed for SAP internal tooling context |
+| Stakeholder identification | "who are my stakeholders", "map stakeholders for this initiative", "who needs to be involved" | `pm-essentials:stakeholder-identification` | Inject context block D — broad brainstorm → allies/audiences/influencers → priority targets |
+| Stakeholder mapping | "power interest grid", "stakeholder priorities", "who do I focus on", "engagement strategy" | `pm-essentials:stakeholder-mapping` | Inject context block D — Power × Interest + Impact × Power grids |
+| Validation / proof of life | "how do we validate this", "what should we test first", "proof of life", "cheapest way to test" | `pm-essentials:pol-probe-advisor` | Inject context block A — recommends which prototype type fits the hypothesis and risk level |
+| PRD refinement | "update the PRD", "PRD is out of date", "reflect this in the PRD", "add this to the PRD", "PRD needs updating" | This skill (execute directly) | Read prd.md + feature registry, identify section to update, propose change, write on confirmation |
 
 ### How to delegate
 
@@ -87,6 +93,21 @@ Scope: SAP employees as buyers/users, not external market. Frame findings in ter
 Any output should feed back into the PRD at `C:\Users\I543296\OneDrive - SAP SE\Desktop\AI Prototyping Lab\prd.md` — flag conflicts with existing PRD direction rather than overriding them.
 ```
 
+**Context block E — Stakeholder mapping (for stakeholder-identification and stakeholder-mapping)**
+```
+I am the Product Owner of the AI Prototyping Lab — a SAP-internal platform for governed AI prototyping.
+Platform phase: MVP Build. Primary target: AI Business Innovator persona (Product Managers, Designers, BPEs, Innovation Teams).
+Stakeholder types relevant to this platform:
+- BU sponsors — fund or champion adoption within SAP business units
+- Engineering leads — own the builder, UI, and MCP server delivery
+- Governance/compliance owners — enforce data handling, model approval, and audit requirements
+- Design leads — own UX and the 4-step wizard experience
+- End users — SAP employees using the platform to build prototypes
+- Platform administrators — manage tool catalog, onboarding content, and access (KIV)
+The platform is SAP-internal — there are no external customers, investors, or commercial stakeholders.
+When mapping: focus on internal adoption, not market positioning. Identify who can block, who can accelerate, and whose voice is underrepresented.
+```
+
 ### Story refinement workflow
 
 When the request is to refine, simplify, or clean up an existing story, follow these steps in order:
@@ -118,6 +139,48 @@ get_issue(issue_key: "GENAIPLAB-XXX", fields: "summary,description,customfield_2
 
 ---
 
+### PRD refinement workflow
+
+When the request is to update, refine, or keep the PRD current, follow these steps:
+
+**1. Read the current PRD**
+```
+Read: C:\Users\I543296\OneDrive - SAP SE\Desktop\AI Prototyping Lab\prd.md
+```
+
+**2. Read the feature registry**
+```
+search_issues(jql: "project = ARTEAI AND issuetype = Feature AND component = 'AI Prototyping Lab' ORDER BY created ASC", maxResults: 50)
+```
+Compare what's been built (Jira) against what the PRD documents. Identify drift.
+
+**3. Identify the section to update**
+Ask Bruce (if not clear from context) which section needs updating:
+- Problem statement / strategic context
+- Personas (roles, phases, descriptions)
+- Platform scope (patterns, formats, tools)
+- Roadmap / phases
+- Principles
+- A specific capability area
+
+**4. Propose the change**
+Show a clear before/after:
+```
+Current:
+[existing PRD text]
+
+Proposed:
+[updated text with reason for change]
+```
+Flag anything that conflicts with existing features or decisions already in Jira. Do not expand platform scope beyond what is already established in Jira unless Bruce explicitly directs it.
+
+**5. Write on confirmation**
+- Update only the section agreed — do not rewrite the whole PRD
+- Preserve the existing structure and heading format
+- After writing, note what was changed and why in a one-line summary
+
+---
+
 ## After delegation
 
 When a pm-skill completes, interpret its output through the PRD before presenting to Bruce:
@@ -129,6 +192,10 @@ When a pm-skill completes, interpret its output through the PRD before presentin
 - **JTBD outputs** → check against existing patterns (Summarization, Extraction, Knowledge Q&A, Document Review). Surface unmet jobs as potential new patterns
 - **Story map** → use the wizard steps as the backbone. Each activity column should map to a wizard step. Offer to generate stories from the map for a specific release slice
 - **Story splitting** → validate each split story against INVEST before presenting. Flag any story that fails Valuable (combine it, don't split it further)
+- **Problem framing** → once the problem is framed, offer to run the OST or draft a feature spec with the framed problem as the problem statement
+- **Positioning statement** → feed output back into the PRD positioning section; offer to update prd.md
+- **Stakeholder identification / mapping** → surface who is missing from current engagement; flag anyone who could block delivery or whose voice is underrepresented
+- **Validation / proof of life** → after the probe is defined, offer to create a GENAIPLAB story to track the experiment
 - **If output suggests a new capability:** check PRD scope before recommending it as a feature. Flag anything outside PRD direction rather than adding it directly
 
 ---
