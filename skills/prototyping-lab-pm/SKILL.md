@@ -34,6 +34,7 @@ This skill is the single entry point for all product work on the AI Prototyping 
 | User story mapping | "story map", "map the workflow", "backbone for", "full user journey" | `pm-essentials:user-story-mapping` | Inject context block A + B — use for planning a whole wizard step or release slice |
 | Story splitting advice | "too big to split", "how to split", "break this down", "this epic is too large" | `pm-essentials:epic-breakdown-advisor` | Inject context block B |
 | Sprint planning | "sprint planning", "sprint goal", "what's ready to plan", "PI planning", "story readiness", "plan the next sprint", "backlog health" | `aiplab-sprint-planning` | Execute directly — reads live board state from Jira |
+| Story refinement | "simplify this story", "refine this story", "clean up this Jira", "apply the same treatment", "update and simplify", paste of a Jira URL | This skill (execute directly) | Fetch story, apply story content rules, fix persona, simplify description, check INVEST, simplify AC, update in Jira |
 
 ### How to delegate
 
@@ -86,7 +87,38 @@ Scope: SAP employees as buyers/users, not external market. Frame findings in ter
 Any output should feed back into the PRD at `C:\Users\I543296\OneDrive - SAP SE\Desktop\AI Prototyping Lab\prd.md` — flag conflicts with existing PRD direction rather than overriding them.
 ```
 
-### After delegation
+### Story refinement workflow
+
+When the request is to refine, simplify, or clean up an existing story, follow these steps in order:
+
+**1. Fetch the story**
+```
+get_issue(issue_key: "GENAIPLAB-XXX", fields: "summary,description,customfield_25640,status,priority,parent,labels")
+```
+
+**2. Analyse — before writing anything, assess:**
+- Persona: is it a named platform persona? If not, identify the correct one from context
+- Description: does it follow the section structure? Are there technical decisions, symbol names, or implementation notes to remove?
+- "So that": does it explain motivation or restate the action?
+- AC: are all items Given/When/Then with observable outcomes? Are there obsolete items (resolved design questions)?
+- INVEST: run the full check table — flag any criterion that fails
+
+**3. Propose changes to Bruce before applying**
+- Show a concise summary of what will change and why
+- Flag any open question that requires Bruce's decision (e.g. transition period, PO-owned questions)
+- Get confirmation before writing to Jira
+
+**4. Apply**
+- Update description and AC in a single `update_issue` call
+- Do not change summary, priority, labels, or status unless explicitly asked
+
+**5. INVEST check on the final state**
+- Run the check table from the post-creation audit section
+- Report the result alongside the update confirmation
+
+---
+
+## After delegation
 
 When a pm-skill completes, interpret its output through the PRD before presenting to Bruce:
 - **Stakeholder request decoding** → identify which persona is affected, whether the ask maps to an existing feature or gap, and whether it conflicts with PRD scope. Offer to frame it as an OST or feature spec next.
