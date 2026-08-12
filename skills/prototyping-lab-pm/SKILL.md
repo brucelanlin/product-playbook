@@ -19,13 +19,20 @@ This skill is the single entry point for all product work on the AI Prototyping 
 |---|---|---|---|
 | Feature creation / refinement | "create a feature", "feature spec", "ARTEAI" | This skill (execute directly) | Full 9-section spec workflow |
 | Story creation / refinement | "write a story", "AC for", "GENAIPLAB", "backlog" | This skill (execute directly) | GENAIPLAB + board 62344 |
-| User research planning | "interview", "discovery", "research plan", "talk to users" | `pm-essentials:discovery-interview-prep` | Inject context block A |
-| Customer voice / feedback mining | "what do users say", "mine reviews", "feedback themes", "VOC" | `pm-essentials:voice-of-customer-miner` | Inject context block A |
-| Jobs to be done | "JTBD", "what job", "why do users", "unmet needs" | `pm-essentials:jobs-to-be-done` | Inject context block A |
-| Persona refinement | "refine persona", "proto-persona", "who is our user" | `pm-essentials:proto-persona` | Inject context block A + B |
-| Competitive comparison | "compare to", "how do we stack up", "competitor", "vs Joule" | `pm-essentials:competitive-analysis-process` | Inject context block C |
-| Market landscape | "what else is out there", "market map", "who plays in this space" | `pm-essentials:market-landscape-scan` | Inject context block C |
-| Story splitting advice | "too big", "how to split", "break this down" | `pm-essentials:epic-breakdown-advisor` | Inject context block B |
+| Stakeholder request decoding | "someone asked me to", "how do I respond to", "my stakeholder wants", "exec asked for", paste of a Slack/email message | `pm-essentials:incoming-request-advisor` | Inject context block D — decode the ask before acting on it |
+| Frame initiative as hypothesis | "frame this as a bet", "what would prove this wrong", "hypothesis for", "we think if we build" | `pm-essentials:epic-hypothesis` | Inject context block A + B — use before writing a feature spec for a new or uncertain initiative |
+| Opportunity / problem framing | "why do we need this", "what problem are we solving", "stakeholder pushed a feature", "reframe this request" | `pm-essentials:opportunity-solution-tree` | Inject context block A — use when a request arrives as a solution and needs problem framing first |
+| Full discovery cycle | "run discovery", "discovery sprint", "validate this problem", "is this worth building" | `pm-essentials:discovery-process` | Inject context block A — full cycle from hypothesis to validated opportunity |
+| User research planning | "plan interviews", "research plan", "talk to users", "interview guide" | `pm-essentials:discovery-interview-prep` | Inject context block A |
+| Customer voice / feedback mining | "what do users say", "mine feedback", "VOC", "what are users complaining about" | `pm-essentials:voice-of-customer-miner` | Inject context block A |
+| Jobs to be done | "JTBD", "what job", "why do users", "unmet needs", "what are users hiring us for" | `pm-essentials:jobs-to-be-done` | Inject context block A |
+| Persona refinement | "refine persona", "proto-persona", "who is our user", "describe our user" | `pm-essentials:proto-persona` | Inject context block A + B |
+| Quick competitive comparison | "how do we compare to", "vs Joule", "what does SAP Build do", "quick competitive check" | `pm-essentials:competitive-research-snapshot` | Inject context block C — use for a fast cited snapshot; faster than full process |
+| Deep competitive analysis | "full competitive analysis", "competitive strategy", "where do we stand in the market" | `pm-essentials:competitive-analysis-process` | Inject context block C — 6-step process, use for strategy cycles not quick checks |
+| Competitor battle card | "battle card for", "how do we beat", "positioning against" | `pm-essentials:battle-card-builder` | Inject context block C |
+| Market landscape | "what else is out there", "market map", "who plays in this space", "internal tooling landscape" | `pm-essentials:market-landscape-scan` | Inject context block C |
+| User story mapping | "story map", "map the workflow", "backbone for", "full user journey" | `pm-essentials:user-story-mapping` | Inject context block A + B — use for planning a whole wizard step or release slice |
+| Story splitting advice | "too big to split", "how to split", "break this down", "this epic is too large" | `pm-essentials:epic-breakdown-advisor` | Inject context block B |
 
 ### How to delegate
 
@@ -44,12 +51,29 @@ Target users — three personas:
 PRD principles: Governed by default, reusable by default, guided (not open-ended).
 ```
 
-**Context block B — Platform scope & constraints (for story/splitting work)**
+**Context block B — Platform scope, structure & constraints (for story/splitting and story mapping work)**
 ```
 Platform scope: SAP-internal only. Not a consumer product. Users are SAP employees across business and technical roles.
 Current phase: MVP Build — focus on AI Business Innovator persona first.
+4-step wizard structure (use as splitting backbone):
+  Step 1 — Idea Intake: user describes goal, selects pattern, provides inputs
+  Step 2 — Pattern & Setup: configure the selected pattern, choose format and tool
+  Step 3 — Test & Preview: run the prototype, review outputs, iterate
+  Step 4 — Review & Save: save session, export artifact, share or reuse
+Module labels: idea-intake, pattern-setup, test-preview, review-save, governance (cross-cutting)
+Patterns in scope: Content Summarization, Data Extraction, Knowledge Q&A, Document Review & Comparison
+Formats in scope: n8n Workflow, Web Application (Full Project / Standalone HTML / Production-ready IRAD-BTP)
 Do not create for ARTEAI-335 (Model Selection — formally deferred).
 Stories go in GENAIPLAB project, board 62344. Features go in ARTEAI.
+```
+
+**Context block D — Stakeholder request decoding (for incoming-request-advisor)**
+```
+I am the Product Owner of the AI Prototyping Lab — a SAP-internal platform for governed AI prototyping.
+My stakeholders include: SAP business unit sponsors, engineering leads, governance/compliance owners, design leads, and end users (SAP employees).
+Requests often arrive as feature asks or scope additions. My job is to find the outcome underneath the ask before deciding what to build.
+The platform is in MVP Build phase. Scope is governed by the PRD — adding new capabilities requires explicit PRD alignment.
+When decoding a request: separate the literal ask from the job-to-be-done, identify which persona is affected, and flag if the ask conflicts with PRD scope or the deferred feature list (notably ARTEAI-335).
 ```
 
 **Context block C — Competitive framing (for market/competitive work)**
@@ -64,11 +88,15 @@ Any output should feed back into the PRD at `C:\Users\I543296\OneDrive - SAP SE\
 ### After delegation
 
 When a pm-skill completes, interpret its output through the PRD before presenting to Bruce:
-- Research findings → map to the 3 platform personas and the 4-step wizard
-- Competitive findings → frame against platform adjacencies listed in context block C
-- JTBD outputs → check against existing patterns (Summarization, Extraction, Knowledge Q&A, Document Review)
-- If output suggests a new capability: check PRD scope before recommending it as a feature. Flag anything outside PRD direction rather than adding it directly.
-- If output is ready to feed a feature spec: offer to run the feature creation workflow with findings pre-loaded as the problem statement
+- **Stakeholder request decoding** → identify which persona is affected, whether the ask maps to an existing feature or gap, and whether it conflicts with PRD scope. Offer to frame it as an OST or feature spec next.
+- **Epic hypothesis** → once validated, offer to convert the hypothesis directly into a 9-section ARTEAI feature spec with the hypothesis as the problem statement
+- **Opportunity/solution tree** → map opportunities to the 4-step wizard. Which step does this improve? Does it map to an existing ARTEAI feature or is it a gap? Offer to create a feature if it's genuinely new.
+- **Research findings** → map to the 3 platform personas and the 4-step wizard. Offer to pre-load findings as the problem statement for a new feature spec
+- **Competitive findings** → frame against platform adjacencies listed in context block C. Flag anything that suggests a capability gap worth adding to the PRD
+- **JTBD outputs** → check against existing patterns (Summarization, Extraction, Knowledge Q&A, Document Review). Surface unmet jobs as potential new patterns
+- **Story map** → use the wizard steps as the backbone. Each activity column should map to a wizard step. Offer to generate stories from the map for a specific release slice
+- **Story splitting** → validate each split story against INVEST before presenting. Flag any story that fails Valuable (combine it, don't split it further)
+- **If output suggests a new capability:** check PRD scope before recommending it as a feature. Flag anything outside PRD direction rather than adding it directly
 
 ---
 
